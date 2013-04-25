@@ -1,4 +1,4 @@
-function updateUnassignedTracks(unassignedTracks,tracks)
+function tracks = updateUnassignedTracks(unassignedTracks,tracks)
         for i = 1:length(unassignedTracks)
             ind = unassignedTracks(i);
             tracks(ind).age = tracks(ind).age + 1;

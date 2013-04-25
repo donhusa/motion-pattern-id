@@ -11,14 +11,14 @@ nextId = 1; % ID of the next track
 while ~isDone(obj.reader)
     frame = readFrame(obj);
     [centroids, bboxes, mask] = detectObjects(frame,obj);
-    predictNewLocationsOfTracks(tracks);
+    tracks = predictNewLocationsOfTracks(tracks);
     [assignments, unassignedTracks, unassignedDetections] = ...
         detectionToTrackAssignment(tracks,centroids);
 
-    updateAssignedTracks(assignments,centroids,bboxes,tracks);
-    updateUnassignedTracks(unassignedTracks,tracks);
-    deleteLostTracks(tracks);
-    createNewTracks(unassignedDetections,centroids,bboxes,tracks,nextId);
+    tracks = updateAssignedTracks(assignments,centroids,bboxes,tracks);
+    tracks = updateUnassignedTracks(unassignedTracks,tracks);
+    tracks = deleteLostTracks(tracks);
+    [tracks,nextId] = createNewTracks(unassignedDetections,centroids,bboxes,tracks,nextId);
 
     displayTrackingResults(frame,mask,tracks,obj);
 end

@@ -9,10 +9,12 @@ function displayTrackingResults(frame,mask,tracks,obj)
             % noisy detections tend to result in short-lived tracks
             % only display tracks that have been visible for more than
             % a minimum number of frames.
-            reliableTrackInds = ...
-                [tracks(:).totalVisibleCount] > minVisibleCount;
-            reliableTracks = tracks(reliableTrackInds);
+     %       reliableTrackInds = ...
+     %           [tracks(:).totalVisibleCount] > minVisibleCount;
+    %        reliableTracks = tracks(reliableTrackInds);
 
+            reliableTracks = tracks;
+            
             % display the objects. If an object has not been detected
             % in this frame, display its predicted bounding box.
             if ~isempty(reliableTracks)
