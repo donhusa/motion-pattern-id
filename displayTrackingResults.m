@@ -1,4 +1,4 @@
-function displayTrackingResults(frame,mask,tracks,obj)
+function displayTrackingResults(frame,mask,tracks,colorVid,maskVid)
         % convert the frame and the mask to uint8 RGB
         frame = im2uint8(frame);
         mask = uint8(repmat(mask, [1, 1, 3])) .* 255;
@@ -45,6 +45,6 @@ function displayTrackingResults(frame,mask,tracks,obj)
         end
 
         % display the mask and the frame
-        obj.maskPlayer.step(mask);
-        obj.videoPlayer.step(frame);
+        set(colorVid,'CData',frame);
+        set(maskVid,'CData',mask);
     end
