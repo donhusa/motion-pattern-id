@@ -1,18 +1,15 @@
-function multiObjectTracking()
+function multiObjectTrackingDebug()
 
-debug=false;
+debug=true;
 [vid,detect,blob,colorVid,maskVid] = setupSystemObjects(debug);
 tracks = initializeTracks(); % create an empty array of tracks
 nextId = 1; % ID of the next track
 
 % detect moving objects, and track them across video frames
-try
-    start(vid);
-    
-    while islogging(vid);
-        frame = getdata(vid,1);
-        flushdata(vid);
-   
+try  
+    while ~isDone(vid.reader)
+        frame = vid.reader.step();
+
         [centroids, bboxes, mask, detect, blob] = detectObjects(frame,detect,blob);
         tracks = predictNewLocationsOfTracks(tracks);
         [assignments, unassignedTracks, unassignedDetections] = ...
@@ -29,7 +26,5 @@ try
     end
     
 catch err
-    stop(vid); 
-    imaqreset
     rethrow(err);
 end

@@ -1,19 +1,16 @@
-function displayTrackingResults(frame,mask,tracks,colorVid,maskVid)
+function displayTrackingResults(frame,mask,tracks,vid,colorVid,maskVid,debug)
         % convert the frame and the mask to uint8 RGB
         frame = im2uint8(frame);
         mask = uint8(repmat(mask, [1, 1, 3])) .* 255;
 
-        minVisibleCount = 8;
+        minVisibleCount = 4;
         if ~isempty(tracks)
 
-            % noisy detections tend to result in short-lived tracks
-            % only display tracks that have been visible for more than
-            % a minimum number of frames.
-     %       reliableTrackInds = ...
-     %           [tracks(:).totalVisibleCount] > minVisibleCount;
-    %        reliableTracks = tracks(reliableTrackInds);
+            % ignore noise tracks
+            reliableTrackInds = ...
+                [tracks(:).totalVisibleCount] > minVisibleCount;
+            reliableTracks = tracks(reliableTrackInds);
 
-            reliableTracks = tracks;
             
             % display the objects. If an object has not been detected
             % in this frame, display its predicted bounding box.
@@ -45,6 +42,11 @@ function displayTrackingResults(frame,mask,tracks,colorVid,maskVid)
         end
 
         % display the mask and the frame
-        set(colorVid,'CData',frame);
-        set(maskVid,'CData',mask);
+        if ~debug
+            set(colorVid,'CData',frame);
+            set(maskVid,'CData',mask);
+        else
+            vid.maskPlayer.step(mask);
+            vid.videoPlayer.step(frame);
+        end
     end
