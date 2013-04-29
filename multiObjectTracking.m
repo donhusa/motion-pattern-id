@@ -16,8 +16,13 @@ try
         frame = getdata(vid,1);
         flushdata(vid);
         if mod(iter,5)==0
-            [message, input_socket]=client('localhost',3002,input_socket);
-            message
+            [message, input_socket]=client('localhost',5000,input_socket);
+            message=str2num(message)
+            if ~isempty(message)
+                figure(4);
+                plot(message);
+                axis([0 280 -1.5 1.5]);
+            end
             %if message not empty, signal process
         end
         [centroids, bboxes, mask, detect, blob] = detectObjects(frame,detect,blob);

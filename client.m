@@ -11,6 +11,7 @@ function [message,input_socket] = client(host, port,input_socket, number_of_retr
     end
     
     retry        = 0;
+    message=[];
 
     if isempty(input_socket)
             while true
@@ -31,16 +32,17 @@ function [message,input_socket] = client(host, port,input_socket, number_of_retr
 
                 catch
                     % pause before retrying
-                    pause(.1);%1
+                    pause(.9);%1
                 end
             end
     end
-    
-    try
-        message=receiveMessage(input_socket);
-    catch err
-        input_socket.close;
-        rethrow(err)
+    if ~isempty(input_socket)
+        try
+            message=receiveMessage(input_socket);
+        catch err
+            input_socket.close;
+            rethrow(err)
+        end
     end
 
 end
