@@ -27,6 +27,13 @@ function tracks = updateAssignedTracks(assignments,centroids,bboxes,tracks)
             end
             
             
+            tracks(trackIdx).time(end+1)=now;
+            
+            t=(now-tracks(trackIdx).time(end-1))/10^(-5);
+            %fprintf('time %d\n',t);
+            
+            
+            
             % update track's age
             tracks(trackIdx).age = tracks(trackIdx).age + 1;
 
