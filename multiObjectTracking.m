@@ -5,6 +5,7 @@ debug=false;
 tracks = initializeTracks(); % create an empty array of tracks
 nextId = 1; % ID of the next track
 iter=0;
+input_socket=[];
 
 % detect moving objects, and track them across video frames
 try
@@ -15,7 +16,8 @@ try
         frame = getdata(vid,1);
         flushdata(vid);
         if mod(iter,5)==0
-            message=client('localhost',3000);
+            [message, input_socket]=client('localhost',3002,input_socket);
+            message
             %if message not empty, signal process
         end
         [centroids, bboxes, mask, detect, blob] = detectObjects(frame,detect,blob);
@@ -36,5 +38,8 @@ try
 catch err
     stop(vid); 
     imaqreset
+    if ~isempty(input_socket)
+        input_socket.close;
+    end
     rethrow(err);
 end

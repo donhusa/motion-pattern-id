@@ -1,62 +1,46 @@
 % CLIENT connect to a server and read a message
 %
 % Usage - message = client(host, port, number_of_retries)
-function message = client(host, port, number_of_retries)
+function [message,input_socket] = client(host, port,input_socket, number_of_retries)
 
     import java.net.Socket
     import java.io.*
 
-    if (nargin < 3)
-        number_of_retries = 1; % set to -1 for infinite
+    if (nargin < 4)
+        number_of_retries = 3; % set to -1 for infinite
     end
     
     retry        = 0;
-    input_socket = [];
-    message      = [];
 
-    while true
+    if isempty(input_socket)
+            while true
 
-        retry = retry + 1;
-        if ((number_of_retries > 0) && (retry > number_of_retries))
-            fprintf(1, 'Too many retries\n');
-            break;
-        end
-        
-        try
-            fprintf(1, 'Try %d\n',retry);
+                retry = retry + 1;
+                if ((number_of_retries > 0) && (retry > number_of_retries))
+                    fprintf(1, 'Too many retries\n');
+                    break;
+                end
 
-            % throws if unable to connect
-            input_socket = Socket(host, port);
+                try
+                    fprintf(1, 'Try %d\n',retry);
 
-            % get a buffered data input stream from the socket
-            input_stream   = input_socket.getInputStream;
-            d_input_stream = DataInputStream(input_stream);
+                    % throws if unable to connect
+                    input_socket = Socket(host, port);
 
-            fprintf(1, 'Connected to server\n');
+                    break;
 
-            % read data from the socket - wait a short time first
-            pause(0.5);
-            bytes_available = input_stream.available;
-            fprintf(1, 'Reading %d bytes\n', bytes_available);
-            
-            message = zeros(1, bytes_available, 'uint8');
-            for i = 1:bytes_available
-                message(i) = d_input_stream.readByte;
+                catch
+                    % pause before retrying
+                    pause(.1);%1
+                end
             end
-            
-            message = char(message);
-            
-            % cleanup
-            input_socket.close;
-            break;
-            
-        catch
-            if ~isempty(input_socket)
-                input_socket.close;
-            end
-
-            % pause before retrying
-            pause(1);
-        end
     end
+    
+    try
+        message=receiveMessage(input_socket);
+    catch err
+        input_socket.close;
+        rethrow(err)
+    end
+
 end
