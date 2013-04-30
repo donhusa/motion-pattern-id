@@ -6,6 +6,7 @@ tracks = initializeTracks(); % create an empty array of tracks
 nextId = 1; % ID of the next track
 iter=0;
 input_socket=[];
+person='';
 
 % detect moving objects, and track them across video frames
 try
@@ -16,13 +17,18 @@ try
         frame = getdata(vid,1);
         flushdata(vid);
         if mod(iter,5)==0
-            [message, input_socket]=client('localhost',5000,input_socket);
-            message=str2num(message)
-            if ~isempty(message)
+            [person, phoneData, input_socket]=client('10.190.50.175',57193,input_socket,person);
+            if ~isempty(phoneData)
+                phoneData=str2num(phoneData);
                 figure(4);
-                plot(message);
+                plot(phoneData);
                 axis([0 280 -1.5 1.5]);
+                if ~isempty(tracks)
+                    tracks = correlateMotion(person, phoneData,tracks);
+                    tracks = clearHist(tracks);
+                end
             end
+
             %if message not empty, signal process
         end
         [centroids, bboxes, mask, detect, blob] = detectObjects(frame,detect,blob);

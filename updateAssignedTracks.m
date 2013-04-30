@@ -26,6 +26,14 @@ function tracks = updateAssignedTracks(assignments,centroids,bboxes,tracks)
                 largeInd=trackIdx;
             end
             
+            [oldCentX,oldCentY]=findCentroid(tracks(trackIdx).bboxHist(end-1,:));
+            [newCentX,newCentY]=findCentroid(tracks(trackIdx).bboxHist(end,:));
+            
+            %displacement doesn't care about direction, thus abs
+            tracks(trackIdx).xMotion(end+1)=abs(newCentX-oldCentX);
+            tracks(trackIdx).yMotion(end+1)=abs(newCentY-oldCentY);
+            
+            
             
             tracks(trackIdx).time(end+1)=now;
             
@@ -53,6 +61,12 @@ function tracks = updateAssignedTracks(assignments,centroids,bboxes,tracks)
             title(str);
             axis([0 640 0 480]);
             
+            
+            figure(5);
+            x=tracks(largeInd).xMotion;
+            y=tracks(largeInd).yMotion;
+            plot(x);
+            axis([0 12 0 150]);
         end
         
     end

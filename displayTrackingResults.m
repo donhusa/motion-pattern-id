@@ -30,6 +30,9 @@ function displayTrackingResults(frame,mask,tracks,vid,colorVid,maskVid,debug)
                 isPredicted = cell(size(labels));
                 isPredicted(predictedTrackInds) = {' predicted'};
                 labels = strcat(labels, isPredicted);
+                
+                %legit?!?!?!?!?!?!
+                labels=strcat(labels,reliableTracks(:).currPerson);
 
                 % draw on the frame
                 frame = insertObjectAnnotation(frame, 'rectangle', ...
